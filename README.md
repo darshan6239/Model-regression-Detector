@@ -8,6 +8,26 @@ prompt reaches production.
 If you're new to this repo, read this doc top to bottom before touching
 anything — it'll save you time.
 
+## See it catch a real regression
+
+**Baseline run (`v1`) — passes clean:**
+
+![v1 report overview](screenshots/v1_report_overview.png)
+
+![v1 all results](screenshots/v1_report_results.png)
+
+**Changed prompt (`v2`) — regression caught automatically:**
+
+![v2 report warning](screenshots/v2_report_regression.png)
+
+![v2 all results](screenshots/v2_report_results.png)
+
+`v2` uses a shorter, simplified prompt with no few-shot examples. The pipeline
+caught the pass rate drop from 73.3% → 66.7%, flagged it as a `WARNING`, and
+pinpointed the exact case that flipped (`tc_006` — went from correctly
+classifying "cant login. urgent!!" as `account` to misclassifying it as
+`technical`) — all without a human reviewing the diff by hand.
+
 ## What problem this solves
 
 Prompt changes usually ship blind. Someone tweaks a system prompt, it looks
