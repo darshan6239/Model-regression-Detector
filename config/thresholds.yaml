@@ -1,0 +1,13 @@
+# Regression severity thresholds.
+# These are percentage-point deltas in overall category pass rate.
+# e.g. warning_threshold_pct: 3 means a drop of 3 percentage points
+# (94% -> 91%) triggers a warning.
+
+warning_threshold_pct: 3
+critical_threshold_pct: 8
+
+# Drift detection: how many recent runs to average over, and how far
+# the rolling average can drop from the historical baseline before
+# firing a "slow drift" warning (percentage points).
+drift_window_runs: 7
+drift_threshold_pct: 5

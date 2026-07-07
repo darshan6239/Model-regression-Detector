@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Eval Report — {{ run.run_id }}</title>
+<style>
+  body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; background: #0f1117; color: #e6e6e6; margin: 0; padding: 40px; }
+  .container { max-width: 1000px; margin: 0 auto; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .meta { color: #9aa0ac; font-size: 13px; margin-bottom: 30px; }
+  .scorecard { display: flex; gap: 16px; margin-bottom: 30px; flex-wrap: wrap; }
+  .card { background: #171a21; border: 1px solid #262a35; border-radius: 10px; padding: 16px 20px; min-width: 160px; }
+  .card .label { font-size: 12px; color: #9aa0ac; text-transform: uppercase; letter-spacing: 0.04em; }
+  .card .value { font-size: 26px; font-weight: 600; margin-top: 4px; }
+  .badge { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+  .badge-ok { background: #113a24; color: #4ade80; }
+  .badge-warning { background: #3a2f11; color: #facc15; }
+  .badge-critical { background: #3a1414; color: #f87171; }
+  .badge-info { background: #1a2a3a; color: #60a5fa; }
+  .delta-up { color: #4ade80; }
+  .delta-down { color: #f87171; }
+  h2 { font-size: 16px; margin-top: 40px; margin-bottom: 12px; border-bottom: 1px solid #262a35; padding-bottom: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #1e222c; vertical-align: top; }
+  th { color: #9aa0ac; font-weight: 500; text-transform: uppercase; font-size: 11px; letter-spacing: 0.03em; }
+  .regression-row td { background: rgba(248, 113, 113, 0.06); }
+  .improvement-row td { background: rgba(74, 222, 128, 0.06); }
+  .old-val { color: #f87171; }
+  .new-val { color: #4ade80; }
+  .empty-state { color: #9aa0ac; font-size: 13px; padding: 16px 0; }
+  code { background: #1e222c; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Model Regression Report</h1>
+  <div class="meta">
+    Run <code>{{ run.run_id }}</code> · Prompt version <code>{{ run.prompt_version }}</code> ·
+    Model <code>{{ run.model }}</code> · {{ run.timestamp }}
+  </div>
+
+  <span class="badge badge-{{ diff.severity }}">{{ diff.severity }}</span>
+
+  <div class="scorecard">
+    <div class="card">
+      <div class="label">Category Pass Rate</div>
+      <div class="value">{{ "%.1f"|format(stats.category_pass_rate * 100) }}%</div>
+    </div>
+    {% if diff.has_baseline %}
+    <div class="card">
+      <div class="label">vs Baseline</div>
+      <div class="value {{ 'delta-up' if diff.overall_pass_rate_delta >= 0 else 'delta-down' }}">
+        {{ "%+.1f"|format(diff.overall_pass_rate_delta * 100) }}%
+      </div>
+    </div>
+    {% endif %}
+    <div class="card">
+      <div class="label">Avg Summary Score</div>
+      <div class="value">{{ stats.avg_summary_score }} / 5</div>
+    </div>
+    <div class="card">
+      <div class="label">Avg Latency</div>
+      <div class="value">{{ stats.avg_latency_ms }} ms</div>
+    </div>
+    <div class="card">
+      <div class="label">Total Cases</div>
+      <div class="value">{{ stats.total_cases }}</div>
+    </div>
+  </div>
+
+  {% if diff.has_baseline %}
+  <h2>Regressions ({{ diff.regression_count }})</h2>
+  {% if diff.regressions %}
+  <table>
+    <tr><th>Case</th><th>Input</th><th>Expected</th><th>Was</th><th>Now</th><th>Difficulty</th></tr>
+    {% for r in diff.regressions %}
+    <tr class="regression-row">
+      <td>{{ r.test_case_id }}</td>
+      <td>{{ r.input_text[:80] }}{% if r.input_text|length > 80 %}...{% endif %}</td>
+      <td>{{ r.expected_category }}</td>
+      <td class="old-val">{{ r.baseline_actual }}</td>
+      <td class="new-val">{{ r.current_actual }}</td>
+      <td>{{ r.difficulty }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <div class="empty-state">No regressions detected in this run.</div>
+  {% endif %}
+
+  <h2>Improvements ({{ diff.improvement_count }})</h2>
+  {% if diff.improvements %}
+  <table>
+    <tr><th>Case</th><th>Input</th><th>Expected</th><th>Was</th><th>Now</th><th>Difficulty</th></tr>
+    {% for r in diff.improvements %}
+    <tr class="improvement-row">
+      <td>{{ r.test_case_id }}</td>
+      <td>{{ r.input_text[:80] }}{% if r.input_text|length > 80 %}...{% endif %}</td>
+      <td>{{ r.expected_category }}</td>
+      <td class="old-val">{{ r.baseline_actual }}</td>
+      <td class="new-val">{{ r.current_actual }}</td>
+      <td>{{ r.difficulty }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <div class="empty-state">No improvements in this run.</div>
+  {% endif %}
+
+  <h2>Per-Category Delta</h2>
+  <table>
+    <tr><th>Category</th><th>Delta</th></tr>
+    {% for cat, delta in diff.per_category_delta.items() %}
+    <tr>
+      <td>{{ cat }}</td>
+      <td class="{{ 'delta-up' if delta >= 0 else 'delta-down' }}">{{ "%+.1f"|format(delta * 100) }}%</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <div class="empty-state">{{ diff.message }}</div>
+  {% endif %}
+
+  <h2>All Results</h2>
+  <table>
+    <tr><th>Case</th><th>Input</th><th>Expected</th><th>Actual</th><th>Match</th><th>Summary Score</th><th>Latency</th></tr>
+    {% for r in results %}
+    <tr>
+      <td>{{ r.test_case_id }}</td>
+      <td>{{ r.input_text[:60] }}{% if r.input_text|length > 60 %}...{% endif %}</td>
+      <td>{{ r.expected_category }}</td>
+      <td>{{ r.actual_category }}</td>
+      <td>{{ "✓" if r.category_match else "✗" }}</td>
+      <td>{{ r.summary_score }}/5</td>
+      <td>{{ r.latency_ms }}ms</td>
+    </tr>
+    {% endfor %}
+  </table>
+
+</div>
+</body>
+</html>

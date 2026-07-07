@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  eval-runner:
+    build: .
+    env_file: .env
+    volumes:
+      - ./runs:/app/runs
+      - ./reports/output:/app/reports/output
+    command: ["--prompt-version", "v1"]
+
+  dashboard:
+    build: .
+    env_file: .env
+    entrypoint: ["streamlit", "run", "dashboard/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./runs:/app/runs

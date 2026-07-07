@@ -1,0 +1,111 @@
+{
+  "dataset_version": "v1",
+  "created_at": "2026-07-08T00:00:00",
+  "test_cases": [
+    {
+      "id": "tc_001",
+      "input": {"email_text": "Hi, I noticed I was billed $49.99 twice this month for my Pro plan. Can you please refund the extra charge? My account email is the one I'm writing from."},
+      "expected": {"category": "billing", "summary": "Customer was double-charged for their Pro plan and wants a refund."},
+      "difficulty": "easy",
+      "notes": "Clear, unambiguous billing complaint with a specific ask."
+    },
+    {
+      "id": "tc_002",
+      "input": {"email_text": "The export to CSV button just spins forever and never actually downloads anything. I've tried on Chrome and Firefox, same result."},
+      "expected": {"category": "technical", "summary": "Customer reports the CSV export button hangs and never completes on multiple browsers."},
+      "difficulty": "easy",
+      "notes": "Clear bug report with reproduction detail."
+    },
+    {
+      "id": "tc_003",
+      "input": {"email_text": "I forgot my password and the reset email never arrives, I've checked spam folder too."},
+      "expected": {"category": "account", "summary": "Customer isn't receiving the password reset email, including in spam."},
+      "difficulty": "easy",
+      "notes": "Clear account access issue."
+    },
+    {
+      "id": "tc_004",
+      "input": {"email_text": "Just wanted to say I really love the new dashboard redesign, great job team!"},
+      "expected": {"category": "general", "summary": "Customer is giving positive feedback about the new dashboard redesign."},
+      "difficulty": "easy",
+      "notes": "Clear positive feedback, no action needed."
+    },
+    {
+      "id": "tc_005",
+      "input": {"email_text": "Why is my invoice showing a different plan name than what I signed up for? Is this a billing mistake or did something change with my account settings?"},
+      "expected": {"category": "billing", "summary": "Customer sees a plan name mismatch on their invoice and isn't sure if it's a billing error or account change."},
+      "difficulty": "hard",
+      "notes": "Ambiguous — could be billing or account. Billing is the primary intent since the complaint centers on the invoice."
+    },
+    {
+      "id": "tc_006",
+      "input": {"email_text": "cant login. urgent!!"},
+      "expected": {"category": "account", "summary": "Customer cannot log in and says it's urgent."},
+      "difficulty": "medium",
+      "notes": "Extremely short, low-context, tests robustness to terse input."
+    },
+    {
+      "id": "tc_007",
+      "input": {"email_text": "So the 'premium' support I'm paying extra for means waiting 3 days for a reply? Great, love that for me."},
+      "expected": {"category": "general", "summary": "Customer is sarcastically complaining about slow premium support response times."},
+      "difficulty": "hard",
+      "notes": "Sarcasm test — model may misread tone. Could arguably be billing (paying for premium) but core complaint is service quality/general feedback."
+    },
+    {
+      "id": "tc_008",
+      "input": {"email_text": "Necesito cancelar mi suscripcion y no se como hacerlo, el boton no aparece en mi cuenta."},
+      "expected": {"category": "billing", "summary": "Customer wants to cancel their subscription but can't find the cancel button in their account."},
+      "difficulty": "hard",
+      "notes": "Non-English input (Spanish). Tests multilingual handling. Core intent is subscription cancellation = billing."
+    },
+    {
+      "id": "tc_009",
+      "input": {"email_text": "teh app keeps crashign wehn i try too upload a fiel bigger then 10mb, pls fix"},
+      "expected": {"category": "technical", "summary": "Customer's app crashes when uploading files larger than 10MB."},
+      "difficulty": "medium",
+      "notes": "Heavy typos, tests robustness to noisy text."
+    },
+    {
+      "id": "tc_010",
+      "input": {"email_text": "I want to delete my account permanently and also get a refund for this month since I barely used it."},
+      "expected": {"category": "account", "summary": "Customer wants to permanently delete their account and requests a refund for the current month."},
+      "difficulty": "hard",
+      "notes": "Genuinely dual-category (account deletion + refund). Labeled account since deletion is the primary action requested; refund is secondary. Good case to watch for category drift."
+    },
+    {
+      "id": "tc_011",
+      "input": {"email_text": "Do you offer a student discount? I'm currently enrolled full time and would love to keep using the tool."},
+      "expected": {"category": "billing", "summary": "Customer is asking whether a student discount is available."},
+      "difficulty": "medium",
+      "notes": "Pricing question, not a complaint — tests that billing isn't only 'something went wrong'."
+    },
+    {
+      "id": "tc_012",
+      "input": {"email_text": "2FA codes never arrive via SMS anymore, started about a week ago. I'm on Verizon if that matters."},
+      "expected": {"category": "technical", "summary": "Customer's 2FA SMS codes stopped arriving about a week ago."},
+      "difficulty": "medium",
+      "notes": "Could be argued as account (login-related) or technical (delivery bug). Labeled technical since it's an SMS delivery failure, not account state."
+    },
+    {
+      "id": "tc_013",
+      "input": {"email_text": "hey"},
+      "expected": {"category": "general", "summary": "Customer sent a message with no content beyond a greeting."},
+      "difficulty": "hard",
+      "notes": "Near-empty input, tests graceful handling of no real content."
+    },
+    {
+      "id": "tc_014",
+      "input": {"email_text": "My team plan shows 5 seats but only 3 people can log in, the other 2 get an 'invite expired' error."},
+      "expected": {"category": "account", "summary": "Two of five team seats can't log in due to an expired invite error."},
+      "difficulty": "hard",
+      "notes": "Could be technical (bug) or account (invite/access). Labeled account since it's about access/invites, not app functionality."
+    },
+    {
+      "id": "tc_015",
+      "input": {"email_text": "This is the third time I'm emailing about the same billing issue and nobody has responded. I'm extremely frustrated and considering canceling."},
+      "expected": {"category": "billing", "summary": "Customer is frustrated about an unresolved billing issue after multiple follow-ups and is considering canceling."},
+      "difficulty": "medium",
+      "notes": "Emotionally charged but core issue is still billing — tests that sentiment doesn't override category."
+    }
+  ]
+}
