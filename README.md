@@ -191,3 +191,16 @@ right move is probably to parameterize `golden_dataset/` and `prompts/` per
 feature rather than trying to generalize the schema — keep the golden
 dataset format simple and feature-specific; that's what makes it easy to
 hand-label in the first place.
+
+## Author
+
+Built by **Darshan** — [github.com/darshan6239](https://github.com/darshan6239)
+
+I built this after noticing how often AI teams ship prompt changes without
+any real testing — the "looks fine on 3 examples" problem. Wanted to prove
+out what a lightweight, actually-runnable safety net for that looks like,
+end to end: golden dataset, eval engine, diffing, drift detection, Slack
+alerts, CI integration. Everything here runs for free on Groq's API.
+
+Feedback, issues, and PRs welcome — feel free to reach out if you're
+working on something similar or want to talk through the design decisions.
