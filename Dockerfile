@@ -6,6 +6,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
+
 # Env vars expected at runtime:
 #   GROQ_API_KEY       - required, free key from console.groq.com
 #   SLACK_WEBHOOK_URL  - optional, skip Slack alerts if unset
