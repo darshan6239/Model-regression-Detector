@@ -15,5 +15,6 @@ COPY . .
 #   docker build -t model-regression-detector .
 #   docker run --env-file .env model-regression-detector python main.py --prompt-version v1
 
+
 ENTRYPOINT ["python", "main.py"]
 CMD ["--prompt-version", "v1"]
